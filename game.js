@@ -1,3 +1,5 @@
+// global settings
+
 kaboom({
   global: true,
   fullscreen: true,
@@ -6,6 +8,7 @@ kaboom({
   clearColor: [0, 0, 0, 1],
 });
 
+// variables
 const MOVE_SPEED = 120;
 const JUMP_FORCE = 360;
 const BIG_JUMP_FORCE = 550;
@@ -14,6 +17,7 @@ let isJumping = true;
 let CURRENT_JUMP_FORCE = JUMP_FORCE;
 const FALL_DEATH = 400;
 
+//  loading root and sprites
 loadRoot("https://i.imgur.com/");
 loadSprite("coin", "wbKxhcd.png");
 loadSprite("evil-shroom", "KPO3fR9.png");
@@ -33,6 +37,8 @@ loadSprite("blue-brick", "3e5YRQd.png");
 loadSprite("blue-steel", "gqVoI2b.png");
 loadSprite("blue-evil-shroom", "SvV4ueD.png");
 loadSprite("blue-surprise", "RMqCc1G.png");
+
+// scene and maps
 
 scene("game", ({ level, score }) => {
   layers(["bg", "obj", "ui"], "obj");
@@ -64,6 +70,8 @@ scene("game", ({ level, score }) => {
     ],
   ];
 
+  // sprite settings
+
   const levelCfg = {
     width: 20,
     height: 20,
@@ -87,6 +95,7 @@ scene("game", ({ level, score }) => {
 
   const gameLevel = addLevel(maps[level], levelCfg);
 
+  // scoreboard settings
   const scoreLabel = add([
     text(score),
     pos(30, 6),
@@ -97,6 +106,9 @@ scene("game", ({ level, score }) => {
   ]);
 
   add([text("level " + parseInt(level + 1)), pos(40, 6)]);
+
+
+  // mushroom function
 
   function big() {
     let timer = 0;
@@ -128,6 +140,7 @@ scene("game", ({ level, score }) => {
     };
   }
 
+  // mario settings 
   const player = add([
     sprite("mario"),
     solid(),
@@ -137,10 +150,12 @@ scene("game", ({ level, score }) => {
     origin("bot"),
   ]);
 
+  // mushroom settings
   action("mushroom", (m) => {
     m.move(20, 0);
   });
 
+  //  jumping settings
   player.on("headbump", (obj) => {
     if (obj.is("coin-surprise")) {
       gameLevel.spawn("$", obj.gridPos.sub(0, 1));
@@ -154,11 +169,14 @@ scene("game", ({ level, score }) => {
     }
   });
 
+  // action from touchgin mushroom
   player.collides("mushroom", (m) => {
     destroy(m);
     player.biggify(6);
   });
 
+
+  // coin box setttings
   player.collides("coin", (c) => {
     destroy(c);
     scoreLabel.value++;
@@ -168,6 +186,8 @@ scene("game", ({ level, score }) => {
     d.move(-ENEMY_SPEED, 0);
   });
 
+
+  //  enemy interaction settings
   player.collides("dangerous", (d) => {
     if (isJumping) {
       destroy(d);
@@ -176,6 +196,7 @@ scene("game", ({ level, score }) => {
     }
   });
 
+  // camera settings
   player.action(() => {
     camPos(player.pos);
     if (player.pos.y >= FALL_DEATH) {
@@ -183,6 +204,7 @@ scene("game", ({ level, score }) => {
     }
   });
 
+  //  pipe settings
   player.collides("pipe", () => {
     keyPress("down", () => {
       go("game", {
@@ -192,6 +214,8 @@ scene("game", ({ level, score }) => {
     });
   });
 
+
+  // mario movement settings
   keyDown("left", () => {
     player.move(-MOVE_SPEED, 0);
   });
@@ -213,6 +237,7 @@ scene("game", ({ level, score }) => {
     }
   });
 });
+
 scene("lose", ({ score }) => {
   add([text(score, 32), origin("center"), pos(width() / 2, height() / 2)]);
 });
